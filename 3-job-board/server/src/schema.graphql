@@ -1,0 +1,26 @@
+type Query {
+  jobs: [Job!]
+}
+
+# this code below is used to write api documentation
+""" This is Company Table  """
+type Company {
+  # when we added this icon "!" at the end of data type or scalar
+  # is used to tell graphql a field is mandatory
+  # our API should return that field and the client does not need to
+  # consume that field 
+  id: ID!
+  name: String!
+  description: String
+}
+
+type Job {
+  id: ID!
+  title: String!
+  description: String
+  # this code below is used to write api documentation
+  # __date__ to bold a text and `` to write markdown
+  """ __date__ is a date with ISO Date for example `2023-05-10` """
+  date: String!
+  company: Company
+}
