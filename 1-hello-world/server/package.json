@@ -1,0 +1,16 @@
+{
+  "name": "hello-world-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server",
+    "start:dev": "nodemon server"
+  },
+  "dependencies": {
+    "@apollo/server": "^4.8.1",
+    "graphql": "^16.7.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
