@@ -1,0 +1,39 @@
+{
+  "name": "job-board",
+  "version": "1.0.0",
+  "description": "Learning GraphQL with React Js & Express ",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "graphql",
+    "api",
+    "react",
+    "nodejs"
+  ],
+  "author": "Mathius",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^7.32.0 || ^8.2.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "vite": "^4.4.7"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.0.3",
+    "bulma": "^0.9.4",
+    "graphql": "^16.7.1",
+    "graphql-request": "^6.1.0",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.2",
+    "sass": "^1.64.1"
+  }
+}

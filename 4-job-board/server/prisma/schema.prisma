@@ -1,0 +1,33 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("SERVICE_APP_DATABASE_URL")
+}
+
+model Company {
+  id String @id @default(uuid())
+  name String @db.VarChar(255)
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  jobs Job[]
+}
+
+model Job {
+  id String @id @default(uuid())
+  title String @db.VarChar(255)
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationship
+  company2 Company @relation(fields: [companyId], references: [id])
+  companyId String
+}
