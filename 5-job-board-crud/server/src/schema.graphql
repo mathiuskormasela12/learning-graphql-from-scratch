@@ -1,0 +1,86 @@
+# Define Query Schema
+# This one is used to define read actions
+# Like to get data. Similar with GET method in REST.
+# This's called as Output schema as well
+# Because this is used to define what client request not what client send
+# Because query is used to GET data, its attributes should be a noun,
+# for example job, company, jobs and companies
+type Query {
+  # We set jobs query can't return nullable array
+  # It means, if the job resolvers returns array like this [null]
+  # The server will return an error. But, the jobs resolver can
+  # return empty array or null, for example { jobs: [] } or { jobs: null }
+  jobs: [Job!]
+
+  # We set jobs query is optional, 
+  # because sometime when we want to get a job, 
+  # the job poster maybe has removed its job
+  job(jobId: ID!): Job
+}
+
+# Define a Company schema
+# This's called as Output schema as well
+# Because this is used to define what client request not what client send
+type Company {
+  # We set id field as a mandatory (non-nullable field) field
+  id: ID!
+
+  # We set name field as a mandatory (non-nullable field) field
+  name: String!
+
+  # We set description field as an optional field
+  description: String
+}
+
+# Define a Job Schema
+# This's called as Output schema as well
+# Because this is used to define what client request not what client send
+type Job {
+  # We set id field as a mandatory (non-nullable field) field
+  id: ID!
+
+  # We set title field as a mandatory (non-nullable field) field
+  title: String!
+
+  # We set iddescriptoin field as an optional field
+  description: String
+
+  # We set date field as a mandatory (non-nullable field) field
+  date: String!
+
+  company: Company
+}
+
+# Define Mutations
+# Mutation is used to define write actions.
+# We can use mutation to create actios, such as
+# Create, Update & Delete.
+# Because mutation defines write actions,
+# Fields in mutation should be an verb
+type Mutation {
+  # Regular Mutation, it will be hard if we have a lot of arguments
+  # Because that, we prefer to use Mutation with Input instead 
+  createJob(companyId: ID!, title: String!, description: String): Job!
+
+  # Mutation with Input (Recomended)
+  createJobWithInput(input: CreateJobInput): Job!
+
+  removeJob(jobId: ID!): Job!
+
+  updateJob(input: UpdateJobInput): Job!
+}
+
+# Define Input Schema.
+# Input can be used as argument only.
+# Input refers a data is sent by client to the server.
+input CreateJobInput {
+  companyId: ID!
+  title: String!
+  description: String
+}
+
+input UpdateJobInput {
+  jobId: ID!
+  title: String!
+  description: String!
+}
