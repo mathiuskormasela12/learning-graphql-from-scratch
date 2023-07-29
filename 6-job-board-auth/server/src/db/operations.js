@@ -9,15 +9,24 @@ export const getJobs = () => {
 }
 
 export const getJobById = (jobId) => {
-  return prisma.job.findFirst({
+  return prisma.job.findUnique({
     where: {
       id: jobId
     }
   })
 }
 
+export const getJobByIdAndCompanyId = ({ jobId, companyId }) => {
+  return prisma.job.findUnique({
+    where: {
+      id: jobId,
+      companyId
+    }
+  })
+}
+
 export const getCompanyById = (companyId) => {
-  return prisma.company.findFirst({
+  return prisma.company.findUnique({
     where: {
       id: companyId
     }

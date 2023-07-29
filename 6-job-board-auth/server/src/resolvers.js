@@ -3,8 +3,16 @@
 import jwt from 'jsonwebtoken'
 import { badRequestError, notFoundError, serverError, unauthorizedError } from './helpers/error.js'
 import { parseDate } from './helpers/date.js'
-import { createJob, deleteJob, getCompanyById, getJobById, getJobs, getUserByEmail, getUserByid, updateJob } from './db/operations.js'
+import { createJob, deleteJob, getCompanyById, getJobById, getJobByIdAndCompanyId, getJobs, getUserByEmail, updateJob } from './db/operations.js'
 import config from './config/config.js'
+
+/*
+  If we want to implement authentication
+  better we implement it by RESTful API instead. Because
+  authentication will be done at the HTTP
+  layer. So better we implement that at RESTful API, and for checking
+  if the user has logged in already, we can use Context in GraphQL.
+*/
 
 export const resolvers = {
   // Query is used to implement the Query schema.
@@ -22,7 +30,6 @@ export const resolvers = {
 
         return notFoundError('Jobs are unavailable yet')
       } catch (err) {
-        console.log('LOVE')
         throw serverError(err?.message ?? '')
       }
     },
@@ -49,7 +56,7 @@ export const resolvers = {
   // jobs query by default will not return the associated company,
   // then we map the company below, by defining the Job Schema
   Job: {
-    company: (__root, { companyId }) => getCompanyById(companyId),
+    company: (data) => getCompanyById(data.companyId),
     date: (data) => parseDate(data.createdAt)
   },
 
@@ -60,9 +67,8 @@ export const resolvers = {
     createJob: (__root, { title, description, companyId }) => {
       return createJob({ title, description, companyId })
     },
-    createJobWithInput: async (__root, { input: { title, description } }, { auth }) => {
+    createJobWithInput: async (__root, { input: { title, description } }, { auth, companyId }) => {
       if (auth?.message === null) {
-        const { companyId } = await getUserByid(auth.data.id)
         return createJob({ title, description, companyId })
       }
 
@@ -70,9 +76,9 @@ export const resolvers = {
     },
 
     // Remove Job
-    removeJob: async (__root, { jobId }) => {
+    removeJob: async (__root, { jobId }, { companyId }) => {
       try {
-        const job = await getJobById(jobId)
+        const job = await getJobByIdAndCompanyId({ jobId, companyId })
 
         if (job) {
           await deleteJob(jobId)
@@ -87,9 +93,9 @@ export const resolvers = {
     },
 
     // Update Job
-    updateJob: async (__root, { input: { jobId, title, description } }) => {
+    updateJob: async (__root, { input: { jobId, title, description } }, { companyId }) => {
       try {
-        const job = await getJobById(jobId)
+        const job = await getJobByIdAndCompanyId({ jobId, companyId })
 
         if (job) {
           return await updateJob({ jobId, title, description })

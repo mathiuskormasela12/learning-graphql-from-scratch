@@ -10,6 +10,7 @@ import cors from 'cors'
 import config from './config/config.js'
 import { resolvers } from './resolvers.js'
 import { isLogin } from './middelwares/isLogin.js'
+import { getUserByid } from './db/operations.js'
 
 // Setup __dirname
 const __filename = url.fileURLToPath(import.meta.url)
@@ -48,9 +49,20 @@ const apolloServer = new ApolloServer({ typeDefs, resolvers })
 await apolloServer.start()
 
 // Define Apollo Context to provide a field to ensuer a user has logged in
-const getContext = ({ req }) => {
+const getContext = async ({ req }) => {
+  if (req.app.locals?.auth?.data?.id) {
+    const { companyId = null } = await getUserByid(req.app.locals.auth.data.id)
+    return {
+      auth: req.app.locals.auth,
+      companyId
+    }
+  }
+
   return {
-    auth: req.app.locals.auth
+    auth: {
+      data: null,
+      message: req.app?.locals?.auth?.message ?? 'Error'
+    }
   }
 }
 
