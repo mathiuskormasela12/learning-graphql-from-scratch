@@ -74,30 +74,38 @@ export const getJobs = async () => {
   `
 
   const { data } = await apolloClient.query({
-    query,
+    query
     // Set fetch policy on specific request
-    fetchPolicy: 'network-only'
+    // fetchPolicy: 'network-only'
   })
 
   return data.jobs
 }
 
-export const getJob = async (jobId) => {
-  const query = gql`
+const jobIdFieldsFragment = gql`
+  fragment JobIdFields on Job {
+    id
+    title
+    description
+    company {
+      name
+    }
+  }
+`
+
+const getJobByIdQuery = gql`
     query GetJob($jobId: ID!) {
       job(jobId: $jobId) {
-        id
-        title
-        description
-        company {
-          name
-        }
+        ...JobIdFields
       }
     } 
+
+    ${jobIdFieldsFragment}
   `
 
+export const getJob = async (jobId) => {
   const { data } = await apolloClient.query({
-    query,
+    query: getJobByIdQuery,
     variables: {
       jobId
     }
@@ -109,9 +117,11 @@ export const createJob = async ({ companyId, title, description }) => {
   const mutation = gql`
     mutation CreateJob($input: CreateJobInput!) {
       job: createJobWithInput(input: $input) {
-        id
+        ...JobIdFields
       }
-    } 
+    }
+
+    ${jobIdFieldsFragment} 
   `
 
   const { data } = await apolloClient.mutate({
@@ -122,6 +132,21 @@ export const createJob = async ({ companyId, title, description }) => {
         title,
         description
       }
+    },
+    // This one is used to set returned data by createJob mutation to the getJobById query
+    // For writting query to the another query
+    update: (cache, result) => {
+      const { data } = result
+      cache.writeQuery({
+        // The returned data from createJob mutation will be set to below query
+        query: getJobByIdQuery,
+        // Define variables
+        variables: {
+          jobId: data.job.id
+        },
+        // Define full data that want to write to the another query
+        data
+      })
     }
     // Setup headers on specific request
     // context: {

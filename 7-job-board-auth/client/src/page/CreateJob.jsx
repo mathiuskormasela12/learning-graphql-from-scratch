@@ -22,11 +22,11 @@ function CreateJob () {
 
   const onSubmit = async (data) => {
     try {
-      await createJob({
+      const { id } = await createJob({
         title: data.title,
         description: data.description
       })
-      navigate('/')
+      navigate(`/job/${id}`)
     } catch (err) {
       setState((currentState) => ({
         ...currentState,
